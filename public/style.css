@@ -5,6 +5,10 @@ body, h1, h2, h3, p, form, input, textarea, button {
     box-sizing: border-box;
 }
 
+.form-c{
+    width: 60vw;
+
+}
 
 body {
     font-family: Arial, sans-serif;

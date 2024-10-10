@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const path = require('path');
 const methodOverride = require('method-override'); 
+const dotenv = require('dotenv');
+dotenv.config();
 
-
-require('dotenv').config();
 const app = express();
 const port = 3000;
 
@@ -18,7 +18,6 @@ const db = new pg.Client({
   port: 5432,
 });
 
-
 db.connect(err => {
   if (err) {
     console.error('Connection error', err.stack);
@@ -30,13 +29,14 @@ db.connect(err => {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(methodOverride('_method')); 
+app.use(methodOverride('_method'));
 
-// Set view engine
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Route to get all blogs
+
+
 app.get('/', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM blogs ORDER BY created_at DESC');
@@ -47,20 +47,19 @@ app.get('/', async (req, res) => {
   }
 });
 
-// Route to add a new blog
+
 
 app.post('/blogs', async (req, res) => {
-    const { title, content } = req.body;
-    try {
-      await db.query('INSERT INTO blogs (title, content) VALUES ($1, $2)', [title, content]);
-      res.redirect('/');
-    } catch (err) {
-      console.error('Error adding blog:', err);
-      res.status(500).send('Error adding blog');
-    }
-  });
-  
-// Route to get a blog for editing
+  const { title, content } = req.body;
+  try {
+    await db.query('INSERT INTO blogs (title, content) VALUES ($1, $2)', [title, content]);
+    res.redirect('/');
+  } catch (err) {
+    console.error('Error adding blog:', err);
+    res.status(500).send('Error adding blog');
+  }
+});
+
 app.get('/edit/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -76,7 +75,7 @@ app.get('/edit/:id', async (req, res) => {
   }
 });
 
-// Route to update a blog
+
 app.put('/blogs/:id', async (req, res) => {
   const { id } = req.params;
   const { title, content } = req.body;
@@ -89,7 +88,7 @@ app.put('/blogs/:id', async (req, res) => {
   }
 });
 
-// Route to delete a blog
+
 app.post('/delete', async (req, res) => {
   const { id } = req.body;
   try {
@@ -101,7 +100,7 @@ app.post('/delete', async (req, res) => {
   }
 });
 
-// Start the server
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
